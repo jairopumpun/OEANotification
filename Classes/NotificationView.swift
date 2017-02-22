@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 class NotificationView : UIView{
-    let bundle = NSBundle(identifier: "com.omer.OEANotification")
-    var notificationTimer: NSTimer!
+    let bundle = Bundle(identifier: "com.omer.OEANotification")
+    var notificationTimer: Timer!
     var title: String?
     var subTitle: String?
     var image: UIImage?
@@ -23,27 +23,27 @@ class NotificationView : UIView{
     
     init(frame: CGRect, title: String, subTitle: String?, type: NotificationType?, isDismissable: Bool) {
         super.init(frame: frame)
-        self.initVariables(title, subTitle: subTitle, image: nil, type: type, completionHandler: nil, touchHandler: nil, isDismissable: isDismissable)
+        self.initVariables(title: title, subTitle: subTitle, image: nil, type: type, completionHandler: nil, touchHandler: nil, isDismissable: isDismissable)
         self.setupNotification()
        
     }
     
     init(frame: CGRect, title: String, subTitle: String?, image: UIImage?, type: NotificationType?, isDismissable: Bool) {
         super.init(frame: frame)
-        self.initVariables(title, subTitle: subTitle, image: image, type: type, completionHandler: nil, touchHandler: nil, isDismissable: isDismissable)
+        self.initVariables(title: title, subTitle: subTitle, image: image, type: type, completionHandler: nil, touchHandler: nil, isDismissable: isDismissable)
         self.setupNotification()
     }
     
     init(frame: CGRect, title: String, subTitle: String?, image: UIImage?, type: NotificationType?, completionHandler: (() -> Void)?, isDismissable: Bool) {
         super.init(frame: frame)
-        self.initVariables(title, subTitle: subTitle, image: image, type: type, completionHandler: completionHandler, touchHandler: nil, isDismissable: isDismissable)
+        self.initVariables(title: title, subTitle: subTitle, image: image, type: type, completionHandler: completionHandler, touchHandler: nil, isDismissable: isDismissable)
         self.setupNotification()
     }
     
     init(frame: CGRect, title: String, subTitle: String?, image: UIImage?, type: NotificationType?, completionHandler: (() -> Void)?, touchHandler: (() -> Void)?, isDismissable: Bool) {
         super.init(frame: frame)
         
-        self.initVariables(title, subTitle: subTitle, image: image, type: type, completionHandler: completionHandler, touchHandler: touchHandler, isDismissable: isDismissable)
+        self.initVariables(title: title, subTitle: subTitle, image: image, type: type, completionHandler: completionHandler, touchHandler: touchHandler, isDismissable: isDismissable)
         self.setupNotification()
     }
     
@@ -95,7 +95,7 @@ class NotificationView : UIView{
     }
     
     private func addNotificationView() {
-        NotificationView.animateWithDuration(constants.nvaTimer, animations: { () -> Void in
+        NotificationView.animate(withDuration: constants.nvaTimer, animations: { () -> Void in
             self.frame.origin.y = self.constants.nvMarginTop
             
             }) { (flag) -> Void in
@@ -107,8 +107,8 @@ class NotificationView : UIView{
                 
         }
         
-        self.addTimer(constants.nvaShownTimer)
-        UIApplication.sharedApplication().delegate?.window??.windowLevel = UIWindowLevelStatusBar+1
+        self.addTimer(time: constants.nvaShownTimer)
+        UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelStatusBar+1
         
 
     }
@@ -125,14 +125,14 @@ class NotificationView : UIView{
     
     private func createTitleLabel() {
         let label = UILabel()
-        label.frame = CGRectMake(constants.nvPaddingLeft, constants.nvPaddingTop, self.frame.width - constants.nvPaddingLeft - constants.nvPaddingRight, constants.nvtHeight)
-        label.textAlignment = NSTextAlignment.Left
+        label.frame = CGRect(x:constants.nvPaddingLeft, y:constants.nvPaddingTop, width:self.frame.width - constants.nvPaddingLeft - constants.nvPaddingRight, height:constants.nvtHeight)
+        label.textAlignment = NSTextAlignment.left
         label.text = self.title
         label.font = UIFont(name: "Helvetica", size: 14)
-        label.textColor = UIColor.whiteColor()
-        label.layer.shadowColor = UIColor.blackColor().CGColor
+        label.textColor = UIColor.white
+        label.layer.shadowColor = UIColor.black.cgColor
         label.layer.shadowOpacity = 1
-        label.layer.shadowOffset = CGSizeMake(1, 1)
+        label.layer.shadowOffset = CGSize(width:1, height:1)
         label.layer.shadowOpacity = 0.8
         label.layer.shadowRadius = 1
         self.addSubview(label)
@@ -140,21 +140,21 @@ class NotificationView : UIView{
     
     private func createSubtitleLabel() {
         let subLabel = UILabel()
-        subLabel.frame = CGRectMake(constants.nvPaddingLeft, constants.nvPaddingTop, self.frame.width - constants.nvPaddingLeft - constants.nvPaddingRight, constants.nvtHeight)
-        subLabel.textAlignment = NSTextAlignment.Left
+        subLabel.frame = CGRect(x:constants.nvPaddingLeft, y:constants.nvPaddingTop, width:self.frame.width - constants.nvPaddingLeft - constants.nvPaddingRight, height:constants.nvtHeight)
+        subLabel.textAlignment = NSTextAlignment.left
         subLabel.text = self.subTitle
         subLabel.font = UIFont(name: "Helvetica", size: 9)
-        subLabel.textColor = UIColor.whiteColor()
-        subLabel.layer.shadowColor = UIColor.blackColor().CGColor
+        subLabel.textColor = UIColor.white
+        subLabel.layer.shadowColor = UIColor.black.cgColor
         subLabel.layer.shadowOpacity = 1
-        subLabel.layer.shadowOffset = CGSizeMake(1, 1)
+        subLabel.layer.shadowOffset = CGSize(width:1, height:1)
         subLabel.layer.shadowOpacity = 0.8
         subLabel.layer.shadowRadius = 1
         self.addSubview(subLabel)
     }
     
     private func createImageView() {
-        let imageView: UIImageView = UIImageView(frame: CGRectMake(constants.nvPaddingLeft, constants.nvPaddingTop, constants.nviHeight, constants.nviWidth))
+        let imageView: UIImageView = UIImageView(frame: CGRect(x:constants.nvPaddingLeft, y:constants.nvPaddingTop, width:constants.nviHeight, height:constants.nviWidth))
         constants.nvPaddingLeft += constants.nviPaddingLeft
         imageView.layer.cornerRadius = imageView.frame.size.width / 2
         imageView.clipsToBounds = true
@@ -163,20 +163,20 @@ class NotificationView : UIView{
     }
     
     private func createCloseButton() {
-        let podBundle = NSBundle(forClass: self.classForCoder)
-        if let bundleURL = podBundle.URLForResource("OEANotification", withExtension: "bundle") {
-            if let bundle = NSBundle(URL: bundleURL) {
+        let podBundle = Bundle(for: self.classForCoder)
+        if let bundleURL = podBundle.url(forResource: "OEANotification", withExtension: "bundle") {
+            if let bundle = Bundle(url: bundleURL) {
                 let closeButton = UIButton()
-                closeButton.frame = CGRectMake(self.frame.width - constants.nvPaddingRight, constants.nvdPaddingTop, constants.nvdHeight, constants.nvdWidth)
-                closeButton.setImage(UIImage(named: "close", inBundle: bundle, compatibleWithTraitCollection: nil), forState: .Normal)
-                closeButton.addTarget(self, action: "close", forControlEvents: .TouchDown)
+                closeButton.frame = CGRect(x:self.frame.width - constants.nvPaddingRight, y:constants.nvdPaddingTop, width:constants.nvdHeight, height:constants.nvdWidth)
+                closeButton.setImage(UIImage(named: "close", in: bundle, compatibleWith: nil), for: .normal)
+                closeButton.addTarget(self, action: "close", for: .touchDown)
                 self.addSubview(closeButton)
             }
         }
     }
     
     private func addTimer(time: Double) {
-        self.notificationTimer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: "close", userInfo: nil, repeats: false)
+        self.notificationTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: "close", userInfo: nil, repeats: false)
 
     }
   
@@ -184,11 +184,11 @@ class NotificationView : UIView{
     func close() {
         self.notificationTimer.invalidate()
        
-        NotificationView.animateWithDuration(constants.nvaTimer, animations: { () -> Void in
+        NotificationView.animate(withDuration: constants.nvaTimer, animations: { () -> Void in
                 self.frame.origin.y = self.constants.nvStartYPoint
             }) { (Bool) -> Void in
                 if OEANotification.notificationCount == 1 {
-                    UIApplication.sharedApplication().delegate?.window??.windowLevel = UIWindowLevelNormal
+                    UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelNormal
                     OEANotification.removeOldNotifications()
                 }
         }
