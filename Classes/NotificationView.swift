@@ -86,7 +86,7 @@ class NotificationView : UIView{
     }
     
     private func createTouchEvent() {
-        let tap = UITapGestureRecognizer(target: self, action: "handleTap:")
+		let tap = UITapGestureRecognizer(target: self, action: #selector(NotificationView.handleTap(recognizer:)))
         self.addGestureRecognizer(tap)
     }
     
